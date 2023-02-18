@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Book List - Web App</title>
+    </head>
+    <body>
+        <h1>Book List</h1>
+        <table>
+            <tr>
+                <td>ID</td>
+                <td>Title</td>
+                <td>Publisher</td>
+            </tr>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.id}">1</td>
+                <td th:text="${book.title}">Book 1</td>
+                <td th:text="${book.publisher.publisherName}">Publisher 1</td>
+            </tr>
+        </table>
+    </body>
+</html>
