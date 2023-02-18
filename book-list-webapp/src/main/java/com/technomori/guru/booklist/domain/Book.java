@@ -1,8 +1,9 @@
 package com.technomori.guru.booklist.domain;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,11 +20,20 @@ public class Book {
     private Long id;
     private String title;
     private String isbn;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "author_book",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
-    private Set<Author> authors;
+    private List<Author> authors;
+
+    public Book() {
+    }
+
+    public Book(String title, String isbn, List<Author> authors) {
+        this.title = title;
+        this.isbn = isbn;
+        this.authors = authors;
+    }
 
     public Long getId() {
         return id;
@@ -49,11 +59,11 @@ public class Book {
         this.isbn = isbn;
     }
 
-    public Set<Author> getAuthors() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Set<Author> authors) {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
 
@@ -76,7 +86,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book [id=" + id + ", title=" + title + ", isbn=" + isbn + ", authors=" + authors + "]";
+        return "Book [id=" + id + ", title=" + title + ", isbn=" + isbn + "]";
     }
 
 }

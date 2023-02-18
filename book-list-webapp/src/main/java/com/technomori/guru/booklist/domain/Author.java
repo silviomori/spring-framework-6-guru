@@ -1,7 +1,7 @@
 package com.technomori.guru.booklist.domain;
 
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +18,15 @@ public class Author {
     private String firstName;
     private String lastName;
     @ManyToMany(mappedBy = "authors")
-    private Set<Book> books;
+    private List<Book> books;
+
+    public Author() {
+    }
+
+    public Author(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Long getId() {
         return id;
@@ -44,11 +52,11 @@ public class Author {
         this.lastName = lastName;
     }
 
-    public Set<Book> getBooks() {
+    public List<Book> getBooks() {
         return books;
     }
 
-    public void setBooks(Set<Book> books) {
+    public void setBooks(List<Book> books) {
         this.books = books;
     }
 
@@ -71,7 +79,7 @@ public class Author {
 
     @Override
     public String toString() {
-        return "Author [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", books=" + books + "]";
+        return "Author [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + "]";
     }
 
 }
