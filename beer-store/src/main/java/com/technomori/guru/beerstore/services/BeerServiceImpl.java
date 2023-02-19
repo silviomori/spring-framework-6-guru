@@ -70,4 +70,13 @@ public class BeerServiceImpl implements BeerService {
         return beerMap.get(UUID.fromString(id));
     }
 
+    @Override
+    public void saveNewBeer(Beer beer) {
+        beer.setId(UUID.randomUUID());
+        beer.setVersion(1);
+        beer.setCreatedAt(LocalDateTime.now());
+        beer.setUpdatedAt(LocalDateTime.now());
+        beerMap.put(beer.getId(), beer);
+    }
+
 }

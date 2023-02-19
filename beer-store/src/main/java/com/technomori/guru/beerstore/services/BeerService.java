@@ -10,4 +10,6 @@ public interface BeerService {
 
     Beer getBeerById(String id);
 
+    void saveNewBeer(Beer beer);
+
 }
