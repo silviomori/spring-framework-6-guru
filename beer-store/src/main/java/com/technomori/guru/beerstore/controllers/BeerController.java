@@ -3,6 +3,7 @@ package com.technomori.guru.beerstore.controllers;
 import java.util.Collection;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,6 +22,11 @@ public class BeerController {
     @GetMapping
     public Collection<Beer> listBeers() {
         return beerService.listBeers();
+    }
+
+    @GetMapping("/{id}")
+    public Beer getBeerById(@PathVariable String id) {
+        return beerService.getBeerById(id);
     }
 
 }

@@ -8,4 +8,6 @@ public interface BeerService {
 
     Collection<Beer> listBeers();
 
+    Beer getBeerById(String id);
+
 }

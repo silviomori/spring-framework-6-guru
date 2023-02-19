@@ -65,4 +65,9 @@ public class BeerServiceImpl implements BeerService {
         return beerMap.values();
     }
 
+    @Override
+    public Beer getBeerById(String id) {
+        return beerMap.get(UUID.fromString(id));
+    }
+
 }
