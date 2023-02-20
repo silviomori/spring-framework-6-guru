@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.technomori.guru.beerstore.domain.Beer;
 
+import io.micrometer.common.util.StringUtils;
+
 @Service
 public class BeerServiceImpl implements BeerService {
 
@@ -95,6 +97,28 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public Beer deleteBeer(String id) {
         return beerMap.remove(UUID.fromString(id));
+    }
+
+    @Override
+    public Beer patchBeer(String id, Beer beer) {
+        Beer existingBeer = beerMap.get(UUID.fromString(id));
+        if (StringUtils.isNotBlank(beer.getBeerName())) {
+            existingBeer.setBeerName(beer.getBeerName());
+        }
+        if (StringUtils.isNotBlank(beer.getBeerStyle())) {
+            existingBeer.setBeerStyle(beer.getBeerStyle());
+        }
+        if (beer.getPrice() != null) {
+            existingBeer.setPrice(beer.getPrice());
+        }
+        if (beer.getQuantityOnHand() != null) {
+            existingBeer.setQuantityOnHand(beer.getQuantityOnHand());
+        }
+        if (StringUtils.isNotBlank(beer.getUpc())) {
+            existingBeer.setUpc(beer.getUpc());
+        }
+        existingBeer.setUpdatedAt(LocalDateTime.now());
+        return existingBeer;
     }
 
 }
