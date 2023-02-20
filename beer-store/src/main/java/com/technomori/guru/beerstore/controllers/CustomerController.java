@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Collection;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,12 @@ public class CustomerController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCustomer(@PathVariable String id, @RequestBody Customer customer) {
         customer = customerService.updateCustomer(id, customer);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable String id) {
+        customerService.deleteCustomer(id);
         return ResponseEntity.noContent().build();
     }
 }

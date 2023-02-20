@@ -84,4 +84,9 @@ public class CustomerServiceImpl implements CustomerService {
         return existing;
     }
 
+    @Override
+    public Customer deleteCustomer(String id) {
+        return customerMap.remove(UUID.fromString(id));
+    }
+
 }
