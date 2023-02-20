@@ -14,4 +14,6 @@ public interface BeerService {
 
     Beer updateBeer(String id, Beer beer);
 
+    Beer deleteBeer(String id);
+
 }
