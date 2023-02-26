@@ -16,4 +16,6 @@ public interface CustomerService {
 
     Customer deleteCustomer(String id);
 
+    Customer patchCustomer(String id, Customer customer);
+
 }

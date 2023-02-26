@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import com.technomori.guru.beerstore.domain.Customer;
 
+import io.micrometer.common.util.StringUtils;
+
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -87,6 +89,16 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer deleteCustomer(String id) {
         return customerMap.remove(UUID.fromString(id));
+    }
+
+    @Override
+    public Customer patchCustomer(String id, Customer customer) {
+        Customer existing = customerMap.get(UUID.fromString(id));
+        if (StringUtils.isNotBlank(customer.getFullName())) {
+            existing.setFullName(customer.getFullName());
+        }
+        existing.setUpdatedAt(LocalDateTime.now());
+        return existing;
     }
 
 }
