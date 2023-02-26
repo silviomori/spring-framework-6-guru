@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.technomori.guru.beerstore.domain.Beer;
 import com.technomori.guru.beerstore.services.BeerService;
+import com.technomori.guru.beerstore.services.BeerServiceImpl;
 
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
@@ -54,6 +56,17 @@ class BeerControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(beerTest.getId().toString())))
                 .andExpect(jsonPath("$.beerName", is(beerTest.getBeerName())));
+    }
+
+    @Test
+    void testListBeers() throws Exception {
+        Collection<Beer> listBeers = new BeerServiceImpl().listBeers();
+        given(beerService.listBeers()).willReturn(listBeers);
+
+        mockMvc.perform(get("/api/v1/beers").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(3)));
     }
 
 }
