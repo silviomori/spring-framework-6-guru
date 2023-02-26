@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
@@ -20,53 +19,46 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.technomori.guru.beerstore.domain.Beer;
-import com.technomori.guru.beerstore.services.BeerService;
-import com.technomori.guru.beerstore.services.BeerServiceImpl;
+import com.technomori.guru.beerstore.domain.Customer;
+import com.technomori.guru.beerstore.services.CustomerService;
+import com.technomori.guru.beerstore.services.CustomerServiceImpl;
 
-@WebMvcTest(BeerController.class)
-class BeerControllerTest {
+@WebMvcTest(CustomerController.class)
+class CustomerControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    BeerService beerService;
+    CustomerService customerService;
 
     @Test
-    void getBeerById() throws Exception {
-        Beer beerTest = Beer.builder()
+    void testGetCustomerById() throws Exception {
+        Customer customerTest = Customer.builder()
                 .id(UUID.randomUUID())
                 .version(1)
-                .beerName("Pliny the Younger")
-                .beerStyle("IPA")
-                .upc("8484957731774")
-                .price(BigDecimal.valueOf(51.37))
-                .quantityOnHand(1122)
+                .fullName("Aurelianus Unimanus")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        given(customerService.getCustomerById(any(String.class))).willReturn(customerTest);
 
-        given(beerService.getBeerById(any(String.class))).willReturn(beerTest);
-
-        mockMvc.perform(
-                get("/api/v1/beers/" + beerTest.getId().toString())
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/customers/" + customerTest.getId().toString()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", is(beerTest.getId().toString())))
-                .andExpect(jsonPath("$.beerName", is(beerTest.getBeerName())));
+                .andExpect(jsonPath("$.id", is(customerTest.getId().toString())))
+                .andExpect(jsonPath("$.fullName", is(customerTest.getFullName().toString())));
     }
 
     @Test
-    void testListBeers() throws Exception {
-        Collection<Beer> listBeers = new BeerServiceImpl().listBeers();
-        given(beerService.listBeers()).willReturn(listBeers);
+    void testListCustomers() throws Exception {
+        Collection<Customer> customers = new CustomerServiceImpl().listCustomers();
+        given(customerService.listCustomers()).willReturn(customers);
 
-        mockMvc.perform(get("/api/v1/beers").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/customers").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(listBeers.size())));
+                .andExpect(jsonPath("$.length()", is(customers.size())));
     }
 
 }
