@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,6 +21,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technomori.guru.beerstore.domain.Customer;
 import com.technomori.guru.beerstore.services.CustomerService;
 import com.technomori.guru.beerstore.services.CustomerServiceImpl;
@@ -28,6 +32,9 @@ class CustomerControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @MockBean
     CustomerService customerService;
@@ -59,6 +66,26 @@ class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(customers.size())));
+    }
+
+    @Test
+    void testSaveNewCustomer() throws JsonProcessingException, Exception {
+        Customer newCustomer = Customer.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .fullName("Apollo Longus")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        given(customerService.saveNewCustomer(any(Customer.class))).willReturn(newCustomer);
+
+        mockMvc.perform(
+                post("/api/v1/customers")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newCustomer)))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
     }
 
 }
