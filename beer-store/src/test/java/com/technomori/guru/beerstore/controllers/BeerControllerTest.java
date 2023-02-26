@@ -4,7 +4,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.technomori.guru.beerstore.domain.Beer;
 import com.technomori.guru.beerstore.services.BeerService;
 import com.technomori.guru.beerstore.services.BeerServiceImpl;
@@ -29,6 +32,9 @@ class BeerControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @MockBean
     BeerService beerService;
@@ -69,4 +75,28 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.length()", is(listBeers.size())));
     }
 
+    @Test
+    void saveNewBeer() throws Exception {
+        Beer newBeer = Beer.builder()
+                .id(UUID.randomUUID())
+                .version(1)
+                .beerName("Java Jill")
+                .beerStyle("LAGER")
+                .upc("4006016803570")
+                .price(BigDecimal.valueOf(73.68))
+                .quantityOnHand(2261)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        given(beerService.saveNewBeer(any(Beer.class))).willReturn(newBeer);
+
+        mockMvc.perform(
+                post("/api/v1/beers")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(newBeer)))
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
+    }
 }
