@@ -108,7 +108,7 @@ class BeerControllerTest {
         Beer beer = (Beer) new BeerServiceImpl().listBeers().toArray()[0];
 
         mockMvc.perform(
-                put("/api/v1/beers/{}", beer.getId())
+                put("/api/v1/beers/{%s}", beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))

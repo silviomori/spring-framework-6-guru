@@ -96,7 +96,7 @@ class CustomerControllerTest {
         Customer customer = (Customer) new CustomerServiceImpl().listCustomers().toArray()[0];
 
         mockMvc.perform(
-                put("/api/v1/customers/{}", customer.getId())
+                put("/api/v1/customers/{%s}", customer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)))
