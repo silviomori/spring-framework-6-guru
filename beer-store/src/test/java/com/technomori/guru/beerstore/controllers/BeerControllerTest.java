@@ -1,10 +1,12 @@
 package com.technomori.guru.beerstore.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -19,6 +21,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -116,6 +119,20 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$").doesNotExist());
 
         verify(beerService, times(1)).updateBeer(any(String.class), any(Beer.class));
+    }
+
+    @Test
+    void deleteBeer() throws Exception {
+        Beer beer = (Beer) new BeerServiceImpl().listBeers().toArray()[0];
+
+        mockMvc.perform(
+                delete("/api/v1/beers/{%s}", beer.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(beerService, times(1)).deleteBeer(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(beer.getId().toString());
     }
 
 }

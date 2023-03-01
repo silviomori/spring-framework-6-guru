@@ -1,10 +1,12 @@
 package com.technomori.guru.beerstore.controllers;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,6 +20,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -104,6 +107,20 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$").doesNotExist());
 
         verify(customerService, times(1)).updateCustomer(any(String.class), any(Customer.class));
+    }
+
+    @Test
+    void deleteBeer() throws Exception {
+        Customer customer = (Customer) new CustomerServiceImpl().listCustomers().toArray()[0];
+
+        mockMvc.perform(
+                delete("/api/v1/customers/{%s}", customer.getId())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(customerService, times(1)).deleteCustomer(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(customer.getId().toString());
     }
 
 }
